@@ -8,6 +8,7 @@ function App() {
     initialValues: {
       name: "",
       email: "",
+      mobile: "",
     },
     validationSchema: Yup.object().shape({
       name: Yup.string()
@@ -17,12 +18,15 @@ function App() {
       email: Yup.string()
         .email("Invalid email format")
         .required("Please enter email"),
+      mobile: Yup.string()
+        .matches(/^(\+\d{1,3}[- ]?)?\d{10}$/, "Invalid mobile number")
+        .required("Enter Mobile number"),
     }),
-    onSubmit: (values, { onSubmit, setSubmitting }) => {
+    onSubmit: (values, { resetForm, setSubmitting }) => {
       setTimeout(() => {
         //API Call Here....
         console.log(values);
-        formik.resetForm();
+        resetForm();
         setSubmitting(false);
       }, 3000);
     },
@@ -55,6 +59,14 @@ function App() {
             error={formik.touched.email && !!formik.errors.email}
             helperText={formik.touched.email && formik.errors.email}
             label="Email"
+          />
+          <TextField
+            name="mobile"
+            value={formik.values.mobile}
+            onChange={formik.handleChange}
+            error={formik.touched.mobile && !!formik.errors.mobile}
+            helperText={formik.touched.mobile && formik.errors.mobile}
+            label="Mobile"
           />
           <LoadingButton
             loading={formik.isSubmitting}
