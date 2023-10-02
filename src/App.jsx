@@ -1,7 +1,25 @@
 import LoadingButton from "@mui/lab/LoadingButton";
 import TextField from "@mui/material/TextField";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+
+const validationSchema = Yup.object().shape({
+  name: Yup.string()
+    .min(3, "Minnimum 3 char")
+    .max(10, "max 10 char")
+    .required("Please enter name"),
+  email: Yup.string()
+    .email("Invalid email format")
+    .required("Please enter email"),
+  mobile: Yup.string()
+    .matches(/^(\+\d{1,3}[- ]?)?\d{10}$/, "Invalid mobile number")
+    .required("Enter Mobile number"),
+  gender: Yup.string().required("Select gender"),
+});
 
 function App() {
   const formik = useFormik({
@@ -9,19 +27,9 @@ function App() {
       name: "",
       email: "",
       mobile: "",
+      gender: "",
     },
-    validationSchema: Yup.object().shape({
-      name: Yup.string()
-        .min(3, "Minnimum 3 char")
-        .max(10, "max 10 char")
-        .required("Please enter name"),
-      email: Yup.string()
-        .email("Invalid email format")
-        .required("Please enter email"),
-      mobile: Yup.string()
-        .matches(/^(\+\d{1,3}[- ]?)?\d{10}$/, "Invalid mobile number")
-        .required("Enter Mobile number"),
-    }),
+    validationSchema,
     onSubmit: (values, { resetForm, setSubmitting }) => {
       setTimeout(() => {
         //API Call Here....
@@ -68,6 +76,24 @@ function App() {
             helperText={formik.touched.mobile && formik.errors.mobile}
             label="Mobile"
           />
+
+          <FormControl
+            fullWidth
+            error={formik.touched.gender && !!formik.errors.gender}
+          >
+            <InputLabel id="demo-simple-select-label">Gender</InputLabel>
+            <Select
+              value={formik.values.gender}
+              name="gender"
+              onChange={formik.handleChange}
+              label="Gender"
+            >
+              <MenuItem value="">Select gender</MenuItem>
+              <MenuItem value="male">Male</MenuItem>
+              <MenuItem value="female">Female</MenuItem>
+            </Select>
+          </FormControl>
+
           <LoadingButton
             loading={formik.isSubmitting}
             type="submit"
